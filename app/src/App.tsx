@@ -1,6 +1,12 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import TrashIcon from '@/components/TrashIcon';
+
 interface Todo {
   id: string;
   name: string;
@@ -14,6 +20,7 @@ function App() {
   const [error, setError] = useState('');
   const [newTodo, setNewTodo] = useState('');
   const [selectedTodos, setSelectedTodos] = useState<Todo['id'][]>([]);
+  const [disableClear, setDisableClear] = useState(true);
 
   useEffect(() => {
     fetchTodos();
@@ -56,6 +63,8 @@ function App() {
       );
       return newTodos;
     });
+
+    setSelectedTodos([]);
   }
 
   function handleTodoSelected(id: string) {
@@ -67,34 +76,77 @@ function App() {
       newSelected.splice(indexOfSelecetedTodo, 1);
     }
     setSelectedTodos(newSelected);
-    console.log(newSelected);
+
+    console.log(newSelected.length);
+
+    setDisableClear(newSelected.length === 0);
   }
 
   if (error) <div>Something went wrong</div>;
 
   return (
-    <div>
-      {todos?.map((todo) => (
-        <div key={todo.id} style={{ display: 'flex', gap: '8px' }}>
-          <li>
-            {todo.name}: {todo.status}
-          </li>
-          <input type="checkbox" onChange={() => handleTodoSelected(todo.id)} />
-        </div>
-      ))}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+      <header className="mb-10">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
+          Todo App
+        </h1>
+      </header>
+      <main className="w-full max-w-md mx-auto">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+          <form
+            className="flex gap-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCreateTodo();
+            }}
+          >
+            <Input
+              onChange={(e) => setNewTodo(e.target.value)}
+              value={newTodo}
+              className="w-full"
+              placeholder="Add a new task..."
+            />
+            <Button className="" type="submit">
+              Add Task
+            </Button>
+          </form>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleCreateTodo();
-        }}
-      >
-        <label>
-          Add todo
-          <input onChange={(e) => setNewTodo(e.target.value)} value={newTodo} />
-        </label>
-      </form>
-      <button onClick={handleDeleteTodos}>delete selected</button>
+          <ul className="mt-6 space-y-2">
+            {todos.map((todo) => (
+              <li
+                key={todo.id}
+                className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2"
+              >
+                <div className="flex items-center space-x-4">
+                  <Checkbox
+                    id={todo.id}
+                    onClick={() => handleTodoSelected(todo.id)}
+                  />
+                  <Label
+                    className="text-gray-900 dark:text-gray-100"
+                    htmlFor={todo.id}
+                  >
+                    {todo.name}
+                  </Label>
+                </div>
+                <Button size="icon" variant="ghost">
+                  <TrashIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <span className="sr-only">Delete task</span>
+                </Button>
+              </li>
+            ))}
+          </ul>
+
+          <Button
+            variant="outline"
+            className="mt-4 w-full"
+            onClick={handleDeleteTodos}
+            disabled={disableClear}
+          >
+            Clear completed
+          </Button>
+        </div>
+      </main>
     </div>
   );
 }
