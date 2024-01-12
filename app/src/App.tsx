@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import TrashIcon from '@/components/TrashIcon';
+import { Toaster } from '@/components/ui/toaster';
+import { useToast } from '@/components/ui/use-toast';
 
 interface Todo {
   id: string;
@@ -21,6 +23,8 @@ function App() {
   const [newTodo, setNewTodo] = useState('');
   const [selectedTodos, setSelectedTodos] = useState<Todo['id'][]>([]);
   const [disableClear, setDisableClear] = useState(true);
+
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchTodos();
@@ -147,7 +151,11 @@ function App() {
                     {todo.name}
                   </Label>
                 </div>
-                <Button size="icon" variant="ghost">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => handleDeleteTodo(todo.id)}
+                >
                   <TrashIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                   <span className="sr-only">Delete task</span>
                 </Button>
@@ -165,6 +173,7 @@ function App() {
           </Button>
         </div>
       </main>
+      <Toaster />
     </div>
   );
 }
