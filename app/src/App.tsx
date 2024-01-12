@@ -54,7 +54,7 @@ function App() {
 
   async function handleDeleteTodos() {
     for (const todoId of selectedTodos) {
-      await axios.delete(`${API_URL}/${todoId}`);
+      await handleDeleteTodo(todoId);
     }
 
     setTodos((prevTodos) => {
@@ -65,6 +65,24 @@ function App() {
     });
 
     setSelectedTodos([]);
+  }
+
+  async function handleDeleteTodo(id: string) {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      const todoToDelete = todos.find((todo) => todo.id);
+
+      const newTodos = todos.filter((todo) => todo.id !== id);
+
+      toast({
+        description: `${todoToDelete?.name} deleted.`,
+        duration: 3000,
+        className: 'bg-green-100',
+      });
+      setTodos(newTodos);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function handleTodoSelected(id: string) {
