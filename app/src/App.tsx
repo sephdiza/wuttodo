@@ -110,7 +110,7 @@ function App() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <header className="mb-10">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
-          Todo App
+          wut todo?
         </h1>
       </header>
       <main className="w-full max-w-md mx-auto">
