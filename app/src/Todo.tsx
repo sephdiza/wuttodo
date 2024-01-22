@@ -42,18 +42,30 @@ function Todo() {
     }
   }
 
-  async function handleCreateTodo(): Promise<Todo> {
-    const response = await axios.post(API_URL, { name: newTodo });
-    const data: Todo = await response.data;
+  async function handleCreateTodo() {
+    try {
+      const response = await axios.post(API_URL, { name: newTodo });
+      const data: Todo = await response.data;
 
-    setTodos((prevTodos) => {
-      const newTodos = [...prevTodos, data];
-      return newTodos;
-    });
+      setTodos((prevTodos) => {
+        const newTodos = [...prevTodos, data];
+        return newTodos;
+      });
 
-    setNewTodo('');
-
-    return data;
+      setNewTodo('');
+      toast({
+        description: `Todo: ${data.name} added.`,
+        duration: 3000,
+        className: 'bg-green-100',
+      });
+      return data;
+    } catch (error) {
+      toast({
+        description: `Something went wrong.`,
+        duration: 3000,
+        variant: 'destructive',
+      });
+    }
   }
 
   async function handleDeleteTodos() {
